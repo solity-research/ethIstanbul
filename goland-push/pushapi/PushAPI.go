@@ -1,4 +1,4 @@
-package PushAPI
+package pushapi
 
 import (
 	"github.com/joho/godotenv"
