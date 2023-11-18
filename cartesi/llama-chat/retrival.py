@@ -12,14 +12,43 @@ logger.info("Creating Llama instance")
 llm = Llama(model_path="llama-2-7b-chat.Q4_K_M.gguf")
 logger.info("Llama instance created")
 protocol_data_dict = {}
+def savemessage(input_data):
+    protocol_data_dict[input_data[1]]=input_data[2]
+
+def returnanswer(input_data):
+    context = protocol_data_dict[input_data[1]]
+    question =input_data[2]
+    input_text = f"Context: {context} Question: {question} Answer:"
+    answer = llm(input_text,max_tokens=256,
+    temperature=0.1,
+    top_p=0.5,
+    echo=False,
+    stop=["#"])
+    logger.info(f"output is {answer['choices'][-1]['text']}")
+
+    return answer['choices'][-1]['text']
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
     data['payload'] = bytes.fromhex(data['payload'][2:]).decode('utf-8')
     logger.info(f"asking promt")
     print(data['payload'])
-    output = llm(f"Q: {data['payload']} A: ", max_tokens=32, stop=["Q:", "\n"], echo=False)
-    logger.info(f"output is {output['choices'][-1]['text']}")
-    ethereum_hex = "0x" + output['choices'][-1]['text'].encode("utf-8").hex()
+    input_data=data['payload'].split(":")
+    if input_data[0] == "crt":
+        if input_data[1] in protocol_data_dict.keys():
+            "0x" + f"{input_data[1]} is exist".encode("utf-8").hex()
+        else:
+            savemessage(input_data)
+            logger.info(f"{input_data[1]} data is saved")
+            ethereum_hex = "0x" + f"{input_data[1]} is added".encode("utf-8").hex()
+    elif input_data[0]=='msg':
+        answer=returnanswer(input_data)
+        logger.info(f"Model Response: {answer}")
+        ethereum_hex = "0x" + f"{answer}".encode("utf-8").hex()
+    else:
+        logger.log('there is problem')
+        ethereum_hex = "0x" + f"there is problem".encode("utf-8").hex()
+
+
     logger.info("Adding notice")
     notice={'payload':ethereum_hex}
     response = requests.post(rollup_server + "/notice", json=notice)
@@ -29,6 +58,9 @@ def handle_advance(data):
 
 def handle_inspect(data):
     logger.info(f"Received inspect request data {data}")
+    report = {"payload":  protocol_data_dict[data]}
+    response = requests.post(rollup_server + "/report", json=report)
+    logger.info(f"Received report status {response.status_code}")
     return "accept"
 
 
