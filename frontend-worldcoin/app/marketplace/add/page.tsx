@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from "ethers";
 import { useSDK } from '@metamask/sdk-react';
-import { MetaMaskSDK } from '@metamask/sdk';
+import { Web3Storage } from 'web3.storage';
 import detectEthereumProvider from '@metamask/detect-provider';
 
 
 const AddhtmlForm = () => {
     // State variables for each input
     const [name, setName] = useState('');
+    const [cid, setCid] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [data, setData] = useState('');
     const [file, setFile] = useState(null);
@@ -21,10 +22,6 @@ const AddhtmlForm = () => {
     const handleDataChange = (e: any) => setData(e.target.value);
     const handleFileChange = (e: any) => setFile(e.target.files[0]);
 
-    useEffect(() => {
-      
-        
-    }, [])
     const handleConnect = async () => {
         await window.ethereum.request({
             method: "eth_requestAccounts",
@@ -185,7 +182,7 @@ const AddhtmlForm = () => {
             const feeAmount = ethers.parseEther("0.01"); // Replace with the actual fee amount in Ether
 
             // Send a transaction to the contract
-            const tx = await contract["sendMessage"](534351, data, '0x81B7da7d27a028F3FdDd67D848220eA793D00341',{ value: feeAmount });
+            const tx = await contract["sendMessage"](534351, data, '0x5093a7Cab14f8d7Ea6F34AbfC8ee4b6535de53F5',{ value: feeAmount });
 
             // Wait for the transaction to be mined
             const receipt = await tx.wait();
@@ -195,8 +192,15 @@ const AddhtmlForm = () => {
             console.error('Transaction error:', error);
         }
     };
-    const buttonOnClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
-        sendTransaction()
+    const buttonOnClick = async(event: React.MouseEvent<HTMLButtonElement>) => {
+        const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_STORAGE_TOKEN });
+        const _name = new File([name], "name.txt", { type: "text/plain" });
+        const _shortDescription = new File([shortDescription], "shortDescription.txt", { type: "text/plain" });
+        const _data = new File([data], "data.txt", { type: "text/plain" });
+    
+        const rootCid = await client.put([_name, _shortDescription, _data]);
+        setCid(rootCid)
+        //sendTransaction()
     }
 
     return (
@@ -247,6 +251,11 @@ const AddhtmlForm = () => {
                             onChange={handleFileChange}
                         />
                     </div>
+                    { cid &&
+                        <div className="sm:col-span-2">
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-black" htmlFor="file_input">File is uploaded to <br/> {cid}</label>
+                        </div>
+                    }
                     <div className="flex items-center w-full justify-between sm:col-span-2">
                         <button onClick={buttonOnClick} className="inline-block w-full rounded-lg bg-indigo-500 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base">Send</button>
                     </div>
