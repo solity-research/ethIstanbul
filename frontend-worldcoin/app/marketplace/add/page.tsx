@@ -200,7 +200,7 @@ const AddhtmlForm = () => {
     
         const rootCid = await client.put([_name, _shortDescription, _data]);
         setCid(rootCid)
-        //sendTransaction()
+        sendTransaction()
     }
 
     return (
