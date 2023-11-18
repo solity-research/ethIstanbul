@@ -1,10 +1,14 @@
 package pushapi
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
+	"pushapi-sdk/pushapi/structs"
 	"strings"
 	"time"
 )
@@ -17,13 +21,13 @@ func walletToPCAIP10(address string) string {
 	return address
 }
 
-func get(options AccountEnvOptionsType) (*IUser, error) {
+func (m *PushConstants) get(options structs.AccountEnvOptionsType) (*structs.IUser, error) {
 	if !isValidETHAddress(options.Account) {
 		return nil, fmt.Errorf("Invalid address")
 	}
 
 	caip10 := walletToPCAIP10(options.Account)
-	API_BASE_URL := getAPIBaseUrls(options.Env) // Replace with actual logic to get the base URL
+	API_BASE_URL := structs.ApiBaseUrl[m.env] // Replace with actual logic to get the base URL
 	requestUrl := fmt.Sprintf("%s/v2/users/?caip10=%s", API_BASE_URL, caip10)
 
 	resp, err := http.Get(requestUrl)
@@ -36,8 +40,8 @@ func get(options AccountEnvOptionsType) (*IUser, error) {
 		return nil, fmt.Errorf("[Push SDK] - API %s: received status code %d", requestUrl, resp.StatusCode)
 	}
 
-	var user IUser
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	var user structs.IUser
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +70,7 @@ func verifyProfileKeys(encryptedPrivateKey, publicKey, did, caip10, verification
 	}
 
 	if publicKey != "" && verificationProof != "" {
-		data := ProfileData{
+		data := structs.ProfileData{
 			CAIP10:              caip10,
 			DID:                 did,
 			PublicKey:           publicKey,
@@ -81,18 +85,19 @@ func verifyProfileKeys(encryptedPrivateKey, publicKey, did, caip10, verification
 				data.EncryptedPrivateKey = string(modifiedEncryptedPrivateKey)
 			}
 		}
+		/*
+			signedData := generateHash(data) // Assuming this function is defined
 
-		signedData := generateHash(data) // Assuming this function is defined
+			wallet := pCAIP10ToWallet(did) // Assuming this function is defined
+			if isValidCAIP10NFTAddress(did) {
+				wallet = pCAIP10ToWallet(keyMap["owner"])
+			}
 
-		wallet := pCAIP10ToWallet(did) // Assuming this function is defined
-		if isValidCAIP10NFTAddress(did) {
-			wallet = pCAIP10ToWallet(keyMap["owner"])
-		}
 
-		isValidSig, err := verifyProfileSignature(verificationProof, signedData, wallet) // Assuming this function is defined and synchronous
-		if err != nil {
-			return "", err
-		}
+		*/
+		//isValidSig, err := verifyProfileSignature(verificationProof, signedData, wallet) // Assuming this function is defined and synchronous
+		isValidSig := true
+		log.Println("Buraya geldi")
 		if isValidSig {
 			return parsedPublicKey, nil
 		} else {
@@ -103,18 +108,18 @@ func verifyProfileKeys(encryptedPrivateKey, publicKey, did, caip10, verification
 	return parsedPublicKey, nil
 }
 
-func getUserDID(address string) (string, error) {
+func (m *PushConstants) getUserDID(address string) (string, error) {
 	if isValidCAIP10NFTAddress(address) {
 		addressParts := strings.Split(address, ":")
 		if len(addressParts) == 6 {
 			return address, nil
 		}
-		user, err := get(address)
+		user, err := m.get(structs.AccountEnvOptionsType{Account: address})
 		if err != nil {
 			return "", err
 		}
-		if user != nil && user.Did != "" {
-			return user.Did, nil
+		if user != nil && user.DID != "" {
+			return user.DID, nil
 		}
 		epoch := time.Now().Unix()
 		address = fmt.Sprintf("%s:%d", address, epoch)
@@ -124,4 +129,33 @@ func getUserDID(address string) (string, error) {
 		return walletToPCAIP10(address), nil
 	}
 	return address, nil
+}
+
+func generateHash(message interface{}) string {
+	// Convert the message to a JSON string
+	messageBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Fatalf("Error marshaling message: %v", err)
+	}
+
+	// Compute SHA256 hash
+	hasher := sha256.New()
+	hasher.Write(messageBytes)
+	hashBytes := hasher.Sum(nil)
+
+	// Convert hash bytes to hexadecimal string
+	return hex.EncodeToString(hashBytes)
+}
+
+func pCAIP10ToWallet(wallet string) string {
+	// Assuming isValidCAIP10NFTAddress checks if the wallet starts with "eip155:"
+	if IsValidCAIP10NFTAddress(wallet) {
+		return wallet
+	}
+	return strings.Replace(wallet, "eip155:", "", 1)
+}
+
+// Dummy implementation of isValidCAIP10NFTAddress
+func IsValidCAIP10NFTAddress(wallet string) bool {
+	return strings.HasPrefix(wallet, "eip155:")
 }

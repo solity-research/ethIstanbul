@@ -1,13 +1,12 @@
-package pushapi
+package structs
 
 // ENV - Supported Environments
-type ENV string
 
 const (
-	PROD    ENV = "prod"
-	STAGING ENV = "staging"
-	DEV     ENV = "dev"
-	LOCAL   ENV = "local" // This is for local development only
+	PROD    string = "prod"
+	STAGING string = "staging"
+	DEV     string = "dev"
+	LOCAL   string = "local" // This is for local development only
 )
 
 // ENCRYPTION_TYPE - Supported Encryptions for Push Profile
@@ -58,3 +57,35 @@ const (
 
 var NON_ETH_CHAINS = []int{137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161}
 var ETH_CHAINS = []int{1, 11155111}
+
+// Defining environment types as constants
+const (
+	EnvProd    = "prod"
+	EnvStaging = "staging"
+	EnvDev     = "dev"
+	EnvLocal   = "local"
+)
+
+// Defining the API base URL values
+var ApiBaseUrl = map[string]string{
+	PROD:    "https://backend.epns.io/apis",
+	STAGING: "https://backend-staging.epns.io/apis",
+	DEV:     "https://backend-dev.epns.io/apis",
+	LOCAL:   "http://localhost:4000/apis",
+}
+
+// Defining blockchain network constants
+const (
+	EthMainnet          = "eip155:1"
+	EthSepolia          = "eip155:11155111"
+	PolygonMainnet      = "eip155:137"
+	PolygonMumbai       = "eip155:80001"
+	BscMainnet          = "eip155:56"
+	BscTestnet          = "eip155:97"
+	OptimismTestnet     = "eip155:420"
+	OptimismMainnet     = "eip155:10"
+	PolygonZkEvmTestnet = "eip155:1442"
+	PolygonZkEvmMainnet = "eip155:1101"
+	ArbitrumTestnet     = "eip155:421613"
+	ArbitrumOneMainnet  = "eip155:42161"
+)

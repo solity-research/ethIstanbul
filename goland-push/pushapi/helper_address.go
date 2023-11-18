@@ -3,6 +3,7 @@ package pushapi
 import (
 	"errors"
 	"github.com/ethereum/go-ethereum/common"
+	"pushapi-sdk/pushapi/structs"
 	"strconv"
 	"strings"
 )
@@ -70,7 +71,7 @@ func validateCAIP(addressInCAIP string) bool {
 	return false
 }
 
-func getCAIPDetails(addressInCAIP string) (*structs.CAIPDetailsType, error) {
+func (m *PushConstants) getCAIPDetails(addressInCAIP string) (*structs.CAIPDetailsType, error) {
 	if !validateCAIP(addressInCAIP) {
 		return nil, errors.New("Invalid CAIP address")
 	}
@@ -85,24 +86,24 @@ func getCAIPDetails(addressInCAIP string) (*structs.CAIPDetailsType, error) {
 	}, nil
 }
 
-func (m *PushConstants) getFallbackETHCAIPAddress(address string) string {
-	chainId := "1" // default for PROD
-	if env == DEV || env == STAGING || env == LOCAL {
-		chainId = "11155111" // example chain ID for non-prod environments
-	}
-	return "eip155:" + chainId + ":" + address
-}
-
-func getCAIPAddress(address string) (string, error) {
+func (m *PushConstants) getCAIPAddress(address string) (string, error) {
 	if isValidCAIP10NFTAddress(address) {
 		// Assuming getUserDID function exists and returns a string or an error.
-		return getUserDID(address)
+		return m.getUserDID(address)
 	}
 	if validateCAIP(address) {
 		return address, nil
 	}
 	if isValidETHAddress(address) {
-		return getFallbackETHCAIPAddress(address), nil
+		return m.getFallbackETHCAIPAddress(address), nil
 	}
 	return "", errors.New("Invalid Address: " + address)
+}
+
+func (m *PushConstants) getFallbackETHCAIPAddress(address string) string {
+	chainId := "1" // default for PROD
+	if m.env == structs.DEV || m.env == structs.STAGING || m.env == structs.LOCAL {
+		chainId = "11155111" // example chain ID for non-prod environments
+	}
+	return "eip155:" + chainId + ":" + address
 }
