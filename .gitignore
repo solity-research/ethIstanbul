@@ -1,2 +1,3 @@
 ./frontend-worldcoin/node_modules
 *.gguf
+./python-notebook/*
