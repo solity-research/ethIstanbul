@@ -1,1 +1,2 @@
 ./frontend-worldcoin/node_modules
+*.gguf
