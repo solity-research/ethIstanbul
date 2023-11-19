@@ -4,10 +4,10 @@ const Marketplace = () => {
     return (
         <>
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:gap-6">
-            <div className="w-full flex justify-end">
-                <Link href="/marketplace/add" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                    <span>+ Add your Protocol GPT</span>
-                                </Link>
+                <div className="w-full flex justify-end">
+                    <Link href="/marketplace/add" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                        <span>+ Add your Protocol GPT</span>
+                    </Link>
                 </div>
                 <div className="flex flex-wrap gap-x-4 overflow-hidden rounded-lg border sm:gap-y-4 lg:gap-6">
                     <a href="#" className="group relative block h-48 w-32 overflow-hidden bg-gray-100 sm:h-56 sm:w-60">
@@ -35,7 +35,7 @@ const Marketplace = () => {
                         <div className="flex flex-col items-start gap-2">
                             <div className="flex h-12 w-32 my-auto overflow-hidden rounded border">
                                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                    <span>Subscribe</span>
+                                    <Link href="/message"><span>Start Chat</span></Link>
                                 </button>
                             </div>
                         </div>

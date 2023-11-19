@@ -182,7 +182,8 @@ const AddhtmlForm = () => {
             const feeAmount = ethers.parseEther("0.01"); // Replace with the actual fee amount in Ether
 
             // Send a transaction to the contract
-            const tx = await contract["sendMessage"](534351, data, '0x5093a7Cab14f8d7Ea6F34AbfC8ee4b6535de53F5',{ value: feeAmount });
+            const tx = await contract["sendMessage"](534351, "msg?"+name+"?"+data, '0xebfE3C8dBc94ae65dD0EBB27A5687967b94Cf093',{ value: feeAmount });
+            console.log('Transaction receipt:', "msg?"+name+"?"+data);
 
             // Wait for the transaction to be mined
             const receipt = await tx.wait();

@@ -1,0 +1,185 @@
+[
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "newContract",
+				"type": "address"
+			}
+		],
+		"name": "ContractCreated",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			}
+		],
+		"name": "createNewContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint32",
+				"name": "_origin",
+				"type": "uint32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_sender",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_message",
+				"type": "bytes"
+			}
+		],
+		"name": "handle",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "message",
+				"type": "string"
+			}
+		],
+		"name": "PromptSent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "ReceivedMessage",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "test",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "createdContracts",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_base",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_delimiter",
+				"type": "string"
+			}
+		],
+		"name": "splitString",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_base",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_value",
+				"type": "string"
+			}
+		],
+		"name": "startsWith",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	}
+]
