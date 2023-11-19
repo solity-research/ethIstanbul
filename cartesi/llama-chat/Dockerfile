@@ -17,7 +17,7 @@ ENV PATH="/opt/cartesi/bin:${PATH}"
 
 WORKDIR /opt/cartesi/dapp
 COPY ./requirements.txt .
-#COPY ./llama-2-7b-chat.Q4_K_M.gguf .
+COPY ./llama-2-7b-chat.Q4_K_M.gguf .
 RUN <<EOF
 pip install -r requirements.txt --no-cache
 find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
@@ -26,6 +26,7 @@ EOF
 COPY ./dapp.py .
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
+LABEL io.cartesi.rollups.ram_size=8192Mi
 
 ENTRYPOINT ["rollup-init"]
 CMD ["python3", "dapp.py"]
